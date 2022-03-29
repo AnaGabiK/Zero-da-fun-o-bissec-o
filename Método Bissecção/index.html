@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
+    <!-- meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
     <link href="./node_modules/bootstrap/css/bootstrap.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/css/grid.css">
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
     <title>Calculadora Metodo Bissecção</title>
@@ -21,7 +20,7 @@
               <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Metodo Bissecção</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Gráfico</button>
+              <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false" onclick="valorPlotGraph()">Gráfico</button>
             </li>
           </ul>
     </div>
@@ -61,13 +60,14 @@
         </div>
         <div class="nav justify-content-center">
             <button type="button" class="btn btn-success" onclick="resultado()">Calcula</button>&nbsp;<br>
-            <button type="button" class="btn btn-success" onclick="testeFunc()">Teste Variáveis</button><br>
+            <button type="button" class="btn btn-success" onclick="anotherTest()">Teste Variáveis</button><br>
             <p id="resultadosFunc"></p>
         </div><br>
         <div id="container">
             <div class="grid-item">Iteração</div>
               <div class="grid-item">XA</div>
               <div class="grid-item">f(XA)</div>
+              <div class="grid-item">XB</div>
               <div class="grid-item">f(XB)</div>
               <div class="grid-item">XN</div>
               <div class="grid-item">f(XN)</div>
@@ -79,10 +79,10 @@
                 <div class="nav justify-content-center">
                     <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
                     <script>
-                     var xValues = [50,60,70,80,90,100,110,120,130,140,150  ];
-                     var yValues = [7,8,8,9,9,9,10,11,14,14,30];
+                     //var xValues = [50,60,70,80,90,100,110,120,130,140,150, 160  ];
+                     //var yValues = [7,8,8,9,9,9,10,11,14,14,30, 32];
 
-                    new Chart("myChart", {
+                   /* new Chart("myChart", {
                     type: "line",
                     data: {
                     labels: xValues,
@@ -97,10 +97,10 @@
   options: {
     legend: {display: false},
     scales: {
-      yAxes: [{ticks: {min: 6, max:30}}],
+      yAxes: [{ticks: {min: 6, max:32}}],
     }
   }
-});
+});*/
                         </script>
                 </div>
             </div>
@@ -108,26 +108,45 @@
           </div>
     </div>
 
-    <!-- Optional JavaScript; choose one of the two! -->
-
     <script>
         
         // Sets important constants and variables
 
       const container = document.getElementById("container");
 
-      function makeRows(rows, cols) {
+      function makeRows(it, rows, cols, a, fa, b, fb, ponto, fn, errorF) {
         container.style.setProperty('--grid-rows', rows);
         container.style.setProperty('--grid-cols', cols);
-        for (c = 0; c < (rows * cols); c++) {
-          let cell = document.createElement("div");
-          cell.innerText = (c + 1);
-          container.appendChild(cell).className = "grid-item";
-        };
-      };
+        //for (c = 0; c < (rows * cols); c++) {
+          let cell = document.createElement("div"); 
+          let cellA = document.createElement("div");
+          let cellFa = document.createElement("div");
+          let cellB = document.createElement("div");
+          let cellFb = document.createElement("div");
+          let cellPonto = document.createElement("div");
+          let cellFn = document.createElement("div");
+          let cellErrorF = document.createElement("div");
 
-      makeRows(7,7);
-      
+          cell.innerText = (it);
+          cellA.innerText = (a);
+          cellFa.innerText = (fa);
+          cellB.innerText = (b);
+          cellFb.innerText = (fb);
+          cellPonto.innerText = (ponto);
+          cellFn.innerText = (fn);
+          cellErrorF.innerText = (errorF);
+
+        container.appendChild(cell).className = "grid-item";
+        container.appendChild(cellA).className = "grid-item";
+        container.appendChild(cellFa).className = "grid-item";
+        container.appendChild(cellB).className = "grid-item";
+        container.appendChild(cellFb).className = "grid-item";
+        container.appendChild(cellPonto).className = "grid-item";
+        container.appendChild(cellFn).className = "grid-item";
+        container.appendChild(cellErrorF).className = "grid-item"; 
+ // };
+};
+/* Função para testar leitura de variáveis
       function anotherTest(){     
         var a = document.getElementById("valueA").value;
         var b = document.getElementById("valueB").value;
@@ -138,44 +157,104 @@
             alert('no dif' + a + b);
         }   
       }
-
-      if(Math.sign(b) == -1){
-        a = b;
-      }
-      
+      */
+    
       //Le o valor de parametro como X e executa a funcao inserida;
       function valorFuncao(num){
           x = num;
-          num = eval(funcInserida);
+          num = eval(document.getElementById("inputFunc").value);
           return num;
         }
+
+      function valorPlotGraph(){
+          var a = document.getElementById("valueA").value;
+          var b = document.getElementById("valueB").value;
+
+          var xValues = [];
+          var yValues = [];
+
+          minGraph = Math.round(valorFuncao(a));
+          maxGraph = Math.round(valorFuncao(b));
+
+          a=Number(a);
+          b=Number(b);
+
+          let i=0;
+          for (i=a; i<=b; i=i+0.5){
+            //for(i = 0;i<5;i++){
+            x = i;
+            xValues.push(x);
+            y = eval(document.getElementById("inputFunc").value);
+            yValues.push(y);
+          }
+         // }
+          //return xValues, yValues;
+         
+          new Chart("myChart", {
+                    type: "line",
+                    data: {
+                      labels: xValues,
+                      datasets: [{
+                        fill: false,
+                        lineTension: 0,
+                        backgroundColor: "rgba(0,0,255,1.0)",
+                        borderColor: "rgba(0,0,255,0.1)",
+                        data: yValues
+                      }]
+                    },
+                    options: {
+                      legend: {display: false},
+                      scales: {
+                        yAxes: [{ticks: {min:minGraph, max:maxGraph}}],
+                      }
+                    }
+                  });
+        };
+      
         
-      //Calcula o potno medio
+      //Calcula o ponto medio
       function pontoMedio(a, b){
         p = (a + b)/2;
         return p;
       }
       
       function resultado(){ 
+        //Variáveis de ambiente local <input>
         var a = document.getElementById("valueA").value;
         var b = document.getElementById("valueB").value;
         var precisao = document.getElementById("precision").value; 
-        do{
+
+        precisao = Number(precisao);
+
+        let i = 0;
+        let it = 1;
+        let errorF = 1 + precisao;   
+        
+       do{
+       //Loop iterativo com critério de parada
           ponto = pontoMedio(a,b);
           fa = valorFuncao(a);
-          fb = valorFuncao(b);  
+          fb = valorFuncao(b);
+          fn = valorFuncao(ponto);  
           errorF = Math.abs(fn);
 
           sinalP = Math.sign(fn);
+          sinalB = Math.sign(fb);
+          sinalA = Math.sign(fa);
+          
+          makeRows(it, i, 8 ,a , fa ,  b , fb , ponto , fn , errorF);
 
-          if (sinalP = -1){
-            b = p;
-          } else {           
-            a = p;
+          if(fb == 0) break;
+      
+          if (sinalP == sinalB){
+            b = ponto;
+          } else {         
+            a = ponto;
           }
-
-          //alert('a = ' + a +'fa = ' + fa + 'b = ' + b + 'fb = ' + fb + 'ponto = ' + ponto + 'fn = ' + fn + 'fn = ' + errorF);
-        }while (errorF >= precisao);
+          it++;
+          i++;
+       }while(errorF >= precisao);
+        
       }
       
     </script>
